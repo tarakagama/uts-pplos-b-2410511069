@@ -9,13 +9,13 @@ use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
-    // 1. Fungsi untuk melempar user ke GitHub
+    // 1. Fungsi melempar user ke GitHub
     public function redirectToProvider()
     {
         return Socialite::driver('github')->redirect();
     }
 
-    // 2. Fungsi untuk menangkap data balik dari GitHub
+    // 2. Callback GitHub + Generate JWT
     public function handleProviderCallback()
     {
         try {
@@ -27,19 +27,43 @@ class AuthController extends Controller
             ], [
                 'name' => $githubUser->name ?? $githubUser->nickname,
                 'email' => $githubUser->email,
-                'avatar' => $githubUser->avatar, // Simpan Foto Profil
+                'avatar' => $githubUser->avatar,
                 'auth_provider' => 'github',
-                'password' => bcrypt(Str::random(16)), // Password dummy
+                'password' => bcrypt(Str::random(16)), 
             ]);
 
-            // Sementara return data user dulu untuk ngetes
-            return response()->json([
-                'message' => 'Login Berhasil',
-                'user' => $user
-            ]);
+            // GENERATE TOKEN JWT buat user ini
+            $token = auth()->login($user);
+
+            return $this->respondWithToken($token);
 
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Gagal Login GitHub'], 500);
+            return response()->json(['error' => 'Gagal Login GitHub: ' . $e->getMessage()], 500);
         }
+    }
+
+    // 3. Fungsi Refresh Token (Syarat Poin 4)
+    public function refresh()
+    {
+        return $this->respondWithToken(auth()->refresh());
+    }
+
+    // 4. Fungsi Logout (Syarat Poin 4)
+    public function logout()
+    {
+        auth()->logout();
+        return response()->json(['message' => 'Successfully logged out']);
+    }
+
+    // 5. Helper format response token (Wajib JSON sesuai standar REST API)
+    protected function respondWithToken($token)
+    {
+        return response()->json([
+            'message' => 'Login Berhasil',
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60, // 15 menit
+            'user' => auth()->user()
+        ]);
     }
 }
