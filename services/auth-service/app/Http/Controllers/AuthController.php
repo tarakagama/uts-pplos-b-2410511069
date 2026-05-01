@@ -21,7 +21,6 @@ class AuthController extends Controller
         try {
             $githubUser = Socialite::driver('github')->user();
 
-            // Sesuai syarat poin 5: Mapping ke user lokal
             $user = User::updateOrCreate([
                 'github_id' => $githubUser->id,
             ], [
@@ -42,27 +41,27 @@ class AuthController extends Controller
         }
     }
 
-    // 3. Fungsi Refresh Token (Syarat Poin 4)
+    // 3. Fungsi Refresh Token
     public function refresh()
     {
         return $this->respondWithToken(auth()->refresh());
     }
 
-    // 4. Fungsi Logout (Syarat Poin 4)
+    // 4. Fungsi Logout
     public function logout()
     {
         auth()->logout();
         return response()->json(['message' => 'Successfully logged out']);
     }
 
-    // 5. Helper format response token (Wajib JSON sesuai standar REST API)
+    // 5. Helper format response token 
     protected function respondWithToken($token)
     {
         return response()->json([
             'message' => 'Login Berhasil',
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60, // 15 menit
+            'expires_in' => auth()->factory()->getTTL() * 60, 
             'user' => auth()->user()
         ]);
     }
