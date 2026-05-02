@@ -3,20 +3,19 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Exception;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+use PHPOpenSourceSaver\JWTAuth\Http\Middleware\BaseMiddleware;
 
-class JwtGatewayMiddleware
+class JwtGatewayMiddleware extends BaseMiddleware 
 {
-    public function handle(Request $request, Closure $next): Response
+    public function handle($request, Closure $next)
     {
-
-        if (!$request->hasHeader('Authorization')) {
-            return response()->json([
-                'message' => 'Unauthorized: No Token Provided (Gateway)'
-            ], 401);
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+        } catch (Exception $e) {
+            return response()->json(['status' => 'Token is Invalid'], 401);
         }
-
         return $next($request);
     }
 }
