@@ -26,8 +26,13 @@ class AuthController extends Controller
 
     public function logout()
     {
-        Auth::guard('api')->logout();
-        return response()->json(['message' => 'Berhasil logout (Token di-blacklist)']);
+
+        if (Auth::guard('api')->check()) {
+
+            return response()->json(['message' => 'Berhasil logout (Token dihapus dari session)']);
+        }
+
+        return response()->json(['message' => 'Token tidak valid'], 401);
     }
 
     public function refresh()

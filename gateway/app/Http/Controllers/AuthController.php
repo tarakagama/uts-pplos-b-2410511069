@@ -3,33 +3,48 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http; // Wajib untuk nembak API lain
+use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
 {
+    // Base URL ke Auth-Service
+    private $authServiceUrl = 'http://127.0.0.1:8000/api';
+
     public function login(Request $request)
     {
-        // Validasi input dari user
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
-        try {
-            // Nembak ke Auth-Service (Port 8000)
-            $response = Http::post('http://127.0.0.1:8000/api/login', [
-                'email' => $request->email,
-                'password' => $request->password,
-            ]);
+        $response = Http::post("{$this->authServiceUrl}/login", $request->all());
+        return response()->json($response->json(), $response->status());
+    }
 
-            // Teruskan respon dari Auth-Service ke User
-            return response()->json($response->json(), $response->status());
-            
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Auth Service tidak terjangkau',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+    public function me(Request $request)
+    {
+        // Ambil token dari Header Request si user
+        $token = $request->bearerToken();
+
+        // Teruskan token ke Auth-Service
+        $response = Http::withToken($token)->get("{$this->authServiceUrl}/me");
+        return response()->json($response->json(), $response->status());
+    }
+
+    public function logout(Request $request)
+    {
+        $token = $request->bearerToken();
+
+        // Tembak Logout ke Auth-Service
+        $response = Http::withToken($token)->post("{$this->authServiceUrl}/logout");
+        return response()->json($response->json(), $response->status());
+    }
+
+    public function refresh(Request $request)
+    {
+        $token = $request->bearerToken();
+
+        $response = Http::withToken($token)->post("{$this->authServiceUrl}/refresh");
+        return response()->json($response->json(), $response->status());
     }
 }
