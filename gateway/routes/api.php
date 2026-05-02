@@ -3,22 +3,14 @@
     use Illuminate\Support\Facades\Route;
     use Illuminate\Support\Facades\Http;
     use Illuminate\Http\Request;
+    use App\Http\Controllers\AuthController;
 
 
     //  1. RUTE PUBLIK 
     Route::middleware('throttle:60,1')->group(function () {
 
-        Route::post('/auth/login', function (Illuminate\Http\Request $request) {
-            $response = Http::post('http://127.0.0.1:8000/api/login', $request->all());
-            
-            if ($response->failed()) {
-                return response($response->body(), $response->status())
-                        ->header('Content-Type', 'text/html'); 
-            }
-
-            return $response->json();
-        });
-        
+        Route::post('/login', [AuthController::class, 'login']);
+                
         Route::get('/auth/github', function () {
             return Http::get(env('AUTH_SERVICE_URL') . '/api/login/github')->json();
         });
