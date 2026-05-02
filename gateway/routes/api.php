@@ -1,5 +1,6 @@
     <?php
 
+    use Laravel\Socialite\Facades\Socialite;
     use Illuminate\Support\Facades\Route;
     use Illuminate\Support\Facades\Http;
     use Illuminate\Http\Request;
@@ -12,7 +13,7 @@
         Route::post('/login', [AuthController::class, 'login']);
                 
         Route::get('/auth/github', function () {
-            return Http::get(env('AUTH_SERVICE_URL') . '/api/login/github')->json();
+            return redirect('http://127.0.0.1:8000/api/login/github');
         });
 
         // Proxy ke Field Servic
