@@ -72,3 +72,6 @@ Sistem ini terdiri dari beberapa layanan:
     Buat Pesanan: POST /api/bookings = Membuat reservasi lapangan baru. Sistem akan otomatis menghitung harga dengan memanggil data dari Field Service secara internal.
     Riwayat Pesanan: GET /api/bookings = Menampilkan semua daftar booking yang pernah dibuat oleh user.
     Batalkan Pesanan: DELETE /api/bookings/{id} = Menghapus atau membatalkan reservasi berdasarkan ID Booking.
+
+    LINK Video
+    https://youtu.be/8EHGXvWRo5g
