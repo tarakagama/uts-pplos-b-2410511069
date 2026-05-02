@@ -13,10 +13,8 @@ return new class extends Migration
     {
         Schema::create('fields', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->string('name');
-            $table->string('image_url')->nullable(); 
-            $table->text('description');
+            $table->string('type');
             $table->integer('price_per_hour');
             $table->timestamps();
         });
