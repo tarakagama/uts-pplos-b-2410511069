@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
 
+
 // 1. KELOMPOK RUTE PUBLIK & AUTH PROXY
 Route::middleware('throttle:60,1')->group(function () {
 
@@ -47,14 +48,21 @@ Route::middleware('throttle:60,1')->group(function () {
     });
 });
 
+    Route::post('/bookings', function (Request $request) {
+        $response = Http::withToken($request->bearerToken())
+            ->post(env('BOOKING_SERVICE_URL') . '/api/bookings', $request->all());
+        
+        return response()->json($response->json(), $response->status());
+    });
+
+    Route::get('/bookings', function (Request $request) {
+        $response = Http::withToken($request->bearerToken())
+            ->get(env('BOOKING_SERVICE_URL') . '/api/bookings');
+        return response()->json($response->json(), $response->status());
+    });
 
 // 2. KELOMPOK RUTE TERPROTEKSI (MEMBUTUHKAN LOGIN)
 Route::middleware(['throttle:60,1', 'jwt.gateway'])->group(function () {
     
-    Route::post('/bookings', function (Request $request) {
-        $response = Http::withToken($request->bearerToken())
-            ->post(env('BOOKING_SERVICE_URL') . '/api/bookings', $request->all());
-        return response()->json($response->json(), $response->status());
-    });
 
 });

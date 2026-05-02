@@ -1,0 +1,132 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-4a5b-bc6d-e7f8g9h0",
+		"name": "UTS Microservices Field Service - Updated",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"password123\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "http://127.0.0.1:5000/api/login" }
+					}
+				},
+				{
+					"name": "Get Profile (Me)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": { "raw": "http://127.0.0.1:5000/api/auth/me" }
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": { "raw": "http://127.0.0.1:5000/api/logout" }
+					}
+				}
+			]
+		},
+		{
+			"name": "Fields",
+			"item": [
+				{
+					"name": "Get All Fields (Pagination)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/api/fields?page=1",
+							"query": [
+								{ "key": "page", "value": "1" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Filter by Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/api/fields?category_id=2",
+							"query": [
+								{ "key": "category_id", "value": "2" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Detail Field (with Relations)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": { "raw": "http://127.0.0.1:5000/api/fields/1" }
+					}
+				}
+			]
+		},
+		{
+			"name": "Booking",
+			"item": [
+				{
+					"name": "Create Booking",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"field_id\": 1,\n    \"booking_date\": \"2026-05-15\",\n    \"start_time\": \"14:00\",\n    \"end_time\": \"16:00\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "http://127.0.0.1:5000/api/bookings" }
+					}
+				},
+				{
+					"name": "Get All My Bookings",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": { "raw": "http://127.0.0.1:5000/api/bookings" }
+					}
+				},
+				{
+					"name": "Cancel Booking",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": { "raw": "http://127.0.0.1:5000/api/bookings/1" }
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": "PASTE_TOKEN_DISINI"
+		}
+	]
+}
